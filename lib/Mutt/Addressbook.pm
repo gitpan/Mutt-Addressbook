@@ -11,7 +11,7 @@ BEGIN {
   use Mutt::Addressbook::Record;
 
   use vars qw ($VERSION);
-  $VERSION = (split(/\s/, q($Id: Addressbook.pm,v 1.7 2004/01/30 11:24:01 andre Exp andre $)))[2];
+  $VERSION = (split(/\s/, q($Id: Addressbook.pm,v 1.8 2004/01/30 14:22:38 andre Exp andre $)))[2];
 
   use Class::MethodMaker
     get_set => [qw(
@@ -62,8 +62,8 @@ sub import_data {
     $e_mail_address = $1;
     s/(^From: |$e_mail_address|[<>"])//g;
     chomp;
-    s/^ //;
-    s/ $//;
+    s/^ //; s/ $//;
+    s/[^a-zA-Z0-9 ._()+&-]//g;
     $full_name=/^$/?$e_mail_address:$_;
 
     my $rec = new Mutt::Addressbook::Record;
@@ -91,6 +91,7 @@ sub read {
         $rec->full_name($address->{fullname});
         $rec->e_mail_address($address->{email});
         $rec->category($address->{category});
+        $rec->comment($address->{comment});
         push @addresses,$rec;
       }
     } else {
@@ -106,6 +107,7 @@ sub read {
     my $rec = new Mutt::Addressbook::Record;
     $rec->full_name("Andre Bonhote");
     $rec->e_mail_address('andre@bonhote.org');
+    $rec->comment('Coder of mabip');
     $rec->category("Coder");
     push @addresses,$rec;
     $self->content(\@addresses);
@@ -127,6 +129,7 @@ sub store {
       $ref->{mabip}->{address}->{$_->full_name()} = { 
         email => [ $_->e_mail_address() ],
         category => [ $_->category() ],
+        comment => [ $_->comment() ],
       };
     }
 

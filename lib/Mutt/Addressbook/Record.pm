@@ -5,11 +5,12 @@ BEGIN {
   use warnings;
 
   use vars qw ($VERSION);
-  $VERSION = (split(/\s/, q($Id: Record.pm,v 1.4 2004/01/30 10:36:50 andre Exp andre $)))[2];
+  $VERSION = (split(/\s/, q($Id: Record.pm,v 1.5 2004/01/30 14:22:48 andre Exp andre $)))[2];
 
   use Class::MethodMaker
     get_set => [qw(
       category
+      comment
       full_name
       e_mail_address
     )],
