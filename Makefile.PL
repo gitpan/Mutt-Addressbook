@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     NAME              => 'Mutt::Addressbook',
-    VERSION_FROM      => 'mabip', # finds $VERSION
+    VERSION_FROM      => 'mph', # finds $VERSION
     PREREQ_PM         => {
                             'Class::MethodMaker' => 1.10,
                             'XML::Simple' => '2.00',
@@ -12,5 +12,5 @@ WriteMakefile(
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Mutt/Addressbook.pm', # retrieve abstract from module
        AUTHOR         => 'Andre Bonhote <andre@bonhote.org>') : ()),
-     EXE_FILES        => [ 'mabip' ],
+     EXE_FILES        => [ 'mph' ],
 );

@@ -1,6 +1,18 @@
 Revision history for Perl extension Mutt::Addressbook.
 
-0.01  Thu Jan 29 09:02:35 2004
-	- original version; created by h2xs 1.22 with options
-		-AX -n Mutt::Addressbook
+0.01        Initial 'Release'
+0.02 - 0.04 Minor improvements
+0.05        2004-02-04
+            Improvements:
+            - Import works (there's a bug when reading from STDIN)
+            - Dump works, lookup, category works
+            - Output sorted now
+            Bugs:
+            - STDIN-Warning when importing from STDIN
+            - Duplicates: No warnings. Records with the same 
+              fullname get overwritten.
+            - Things could be cleaner
+            - Lots of other bugs
+            Todo:
+            - Procmail integration
 

@@ -5,7 +5,7 @@ BEGIN {
   use warnings;
 
   use vars qw ($VERSION);
-  $VERSION = (split(/\s/, q($Id: Record.pm,v 1.5 2004/01/30 14:22:48 andre Exp andre $)))[2];
+  $VERSION = (split(/\s/, q($Id: Record.pm,v 1.8 2004/02/04 10:52:14 andre Exp $)))[2];
 
   use Class::MethodMaker
     get_set => [qw(
@@ -19,8 +19,35 @@ BEGIN {
   ;
 
   use constant DEFAULTS => (
+    comment => '',
   );
 }
+
+sub matches {
+  my $self = shift;
+  my %params = @_;
+
+
+  my $category = $params{category};
+  my $lookup   = $params{lookup};
+
+  my $string;
+
+  my $ret;
+
+  die "Uh! Mutt::Record::matches illegally called!" unless ($category || $lookup);
+  
+  $string = sprintf("%s %s %s",$self->full_name(),$self->e_mail_address(),$self->comment()||"");
+
+  if ($category && $lookup) {
+    $ret = $string =~ m/$lookup/i && $self->category() =~ m/$category/i;
+  } else {
+    $ret = $string =~ m/$lookup/i?1:0;
+  }
+
+  return $ret;
+}
+  
 
 sub init {
   my $self = shift;
@@ -35,7 +62,7 @@ __END__
 
 =head1 NAME
 
-Mutt::Addressbook::Record - Keeps the records
+Mutt::Addressbook::Record - Record Class for Mutt::Addressbook
 
 =head1 SYNOPSIS
 
@@ -45,7 +72,7 @@ Mutt::Addressbook::Record - Keeps the records
 
 =head1 DESCRIPTION
 
-bla bla bla
+See Mutt::Addressbook
 
 =head1 SEE ALSO
 

@@ -1,0 +1,118 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Getopt::Long qw(:config no_ignore_case);
+use Pod::Usage;
+use Mutt::Addressbook;
+use Data::Dumper;
+
+my $VERSION; # Keep ExtUtils::MakeMaker happy ...
+$VERSION = '0.05';
+
+# $Id: mph,v 1.7 2004/02/04 11:44:49 andre Exp andre $
+
+## Set some default values
+my %opts = ( 
+  'help' => 0,
+  'import' => 0,
+  'category' => undef,
+  'file' => undef,
+  'version' => 0,
+  'dump' => 0,
+  'format' => undef,
+  'lookup' => undef,
+);
+
+GetOptions(\%opts,
+  'help|?',
+  'import|i',
+  'category|c=s',
+  'file|f=s',
+  'format|F=s',
+  'lookup|l|q=s',
+  'version|V',
+  'dump',
+);
+
+
+# Do what has to be done
+## --help
+pod2usage(1) if $opts{help};
+
+## --version
+&PRINT_VERSION if $opts{version};
+
+## Main block
+STARTER: {
+  my $mab = new Mutt::Addressbook;
+
+  # Is import requested?
+  if ($opts{import}) {
+    $opts{category} = 'default' unless $opts{category};
+    my $ret = $mab->import_data(file=>$opts{file},category=>$opts{category},format=>$opts{format});
+    unless ($ret) {
+      printf "Error: %s - %s\n",$mab->err(),$mab->errstr();
+      pod2usage(1);
+    }
+    #print Dumper($mab->content());
+    printf "Imported %s records of which some could have been duplicates ...\n", scalar(@{$mab->content()});
+    last STARTER;
+  }
+
+  if ($opts{dump}) {
+    my $ret = $mab->dump(format=>$opts{format},lookup=>$opts{lookup},category=>$opts{category});
+    unless ($ret) {
+      printf "Error: %s - %s\n\n",$mab->err(),$mab->errstr();
+      pod2usage(1);
+    }
+    print $mab->dump_content();
+    last STARTER;
+  }
+
+}
+
+
+## Subs
+
+sub PRINT_VERSION {
+  print <<EOV;
+mph version $VERSION
+EOV
+  exit 0;
+}
+
+__END__
+
+=head1 NAME
+
+mph - mutt & procmail helper
+
+=head1 SYNOPSIS
+
+mph --import [ --category <category> ] [ --file <file> ] [ --format <format> ]
+
+mph --dump [ --category <category> ] [ --lookup <string> ] [ --format <format> ]
+
+Options:
+
+ --import|-i                            Import from mbox file
+ --dump|-d                              Dump (matching) data in a specific format
+ --category <category>|-c <category>    Category to import to/dump from. Defaults to 'default'
+ --file <file>|-f                       mbox File to import from. STDIN if omitted
+ --format <format>|-F <format>          Choose out of "CSV","mutt" and "procmail" for --dump,
+                                        "CSV" and "mbox" for --import
+ --lookup|-l|-q                         String to search for
+ --version|-V                           Print version information and exit
+
+=head1 USAGE EXAMPLES
+
+The following command imports all addresses from the specified mailbox into the
+'my category' category:
+
+mph -i -c 'my category' < ~/Mail/inbox
+
+The next line could be issued on a couple of e-mails (or a single one) from within mutt. It
+imports addresses, too:
+
+| mph -i -c 'office'
+
