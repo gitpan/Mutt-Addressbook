@@ -1,0 +1,11 @@
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         Mutt-Addressbook
+version:      0.03
+version_from: mabip
+installdirs:  site
+requires:
+    XML::Simple:                   2.00
+    Class::MethodMaker:            1.1
+
+distribution_type: module
+generated_by: ExtUtils::MakeMaker version 6.12

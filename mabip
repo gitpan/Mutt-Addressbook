@@ -1,0 +1,85 @@
+#!/usr/bin/perl -w
+
+use lib 'lib';
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+use Mutt::Addressbook;
+use Data::Dumper;
+
+my $VERSION; # Keep ExtUtils::MakeMaker happy ...
+$VERSION = '0.03';
+
+# $Id: mabip,v 1.3 2004/01/30 10:35:07 andre Exp andre $
+
+## Set some default values
+my %opts = ( 
+  'help' => 0,
+  'import' => 0,
+  'category' => 'default',
+  'file' => 'STDIN',
+  'version' => 0,
+  'dump' => 0
+);
+
+GetOptions(\%opts,
+  'help|?',
+  'import|i',
+  'category|c=s',
+  'file|f=s',
+  'version|V',
+  'dump',
+);
+
+
+# Do what has to be done
+## --help
+pod2usage(1) if $opts{help};
+
+## --version
+&PRINT_VERSION if $opts{version};
+
+## Main block
+STARTER: {
+  my $mab = new Mutt::Addressbook;
+
+  if ($opts{import}) {
+    $mab->import_data(file=>$opts{file},category=>$opts{category});
+    print Dumper($mab->content());
+    last STARTER;
+  }
+
+  if ($opts{dump}) {
+    $mab->read();
+    print Dumper($mab->content());
+  }
+
+}
+
+
+## Subs
+
+sub PRINT_VERSION {
+  print <<EOV;
+mabip version $VERSION
+EOV
+  exit 0;
+}
+
+__END__
+
+=head1 NAME
+
+mabip - Mutt Address Book In Perl
+
+=head1 SYNOPSIS
+
+mabip [ --import ] [ --category <category> ] [ --file <file> ] [--version]
+
+Options:
+
+ --import               Import from mbox file
+ --category <category>  Category to import to. Defaults to 'default'.
+ --file <file>          mbox File to import from. STDIN if omitted. 
+ --version              Print version information and exit.
+
